@@ -47,6 +47,32 @@ body {
   padding: 16px 16px 12px;
 }
 
+#powered-by {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  text-transform: lowercase;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #2a2a2a;
+}
+.arcnux-mark {
+  width: 18px;
+  height: 18px;
+  filter: brightness(1.1);
+}
+.arcnux-name {
+  color: #f08a3a;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  font-size: 11px;
+  text-transform: none;
+}
+
 #top-row {
   display: flex;
   justify-content: space-between;

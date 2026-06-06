@@ -27,6 +27,7 @@ const SEED = [
 const KEY = 'kpills-guestlist-v1';
 
 let state = { guests: [], updated: 0 };
+let filter = 'all'; // 'all' | 'in' | 'out'
 
 const listEl = document.getElementById('list');
 const searchEl = document.getElementById('search');
@@ -118,7 +119,12 @@ function addGuest(name) {
 function render() {
   const q = searchEl.value.trim().toLowerCase();
   listEl.innerHTML = '';
-  const filtered = state.guests.filter(g => !q || g.name.toLowerCase().includes(q));
+  const filtered = state.guests.filter(g => {
+    if (filter === 'in' && !g.checked) return false;
+    if (filter === 'out' && g.checked) return false;
+    if (q && !g.name.toLowerCase().includes(q)) return false;
+    return true;
+  });
 
   clearBtn.style.display = q ? 'block' : 'none';
   resultCount.textContent = q ? `${filtered.length} result${filtered.length !== 1 ? 's' : ''}` : '';
@@ -146,6 +152,14 @@ function render() {
 
 searchEl.addEventListener('input', render);
 clearBtn.addEventListener('click', () => { searchEl.value = ''; render(); searchEl.focus(); });
+
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    filter = btn.dataset.filter;
+    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b === btn));
+    render();
+  });
+});
 addBtn.addEventListener('click', () => addGuest(addInput.value));
 addInput.addEventListener('keydown', e => { if (e.key === 'Enter') addGuest(addInput.value); });
 

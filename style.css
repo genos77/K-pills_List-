@@ -68,6 +68,32 @@ body {
   line-height: 1;
   padding: 4px;
 }
+#filter-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.tab {
+  flex: 1;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  color: #777;
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 2px;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: all 0.15s;
+  min-height: 40px;
+}
+.tab:active { background: #222; }
+.tab.active {
+  background: #e8ff57;
+  border-color: #e8ff57;
+  color: #0a0a0a;
+}
 #status-row {
   display: flex;
   justify-content: space-between;

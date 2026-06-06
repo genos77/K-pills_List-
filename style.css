@@ -66,9 +66,8 @@ body {
 }
 #powered-by-text {
   font-size: 11px;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
   color: var(--cream);
-  text-transform: uppercase;
   white-space: nowrap;
   font-weight: 700;
 }

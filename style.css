@@ -54,9 +54,22 @@ body {
 #top-row {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 8px;
 }
+
+#logo {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid var(--gold-dim);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  flex-shrink: 0;
+}
+
+#title-block { flex: 1; min-width: 0; }
 
 #label {
   font-family: 'Bebas Neue', 'Courier New', monospace;
@@ -69,7 +82,7 @@ body {
 
 #title {
   font-family: 'Anton', Impact, sans-serif;
-  font-size: 42px;
+  font-size: 32px;
   font-weight: 400;
   letter-spacing: 1px;
   line-height: 0.95;
@@ -82,17 +95,17 @@ body {
 
 #subtitle {
   font-family: 'Anton', Impact, sans-serif;
-  font-size: 20px;
+  font-size: 16px;
   letter-spacing: 3px;
   color: var(--gold-dim);
   margin-top: 2px;
   text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
 }
 
-#counter { text-align: right; }
+#counter { text-align: right; flex-shrink: 0; }
 #count-num {
   font-family: 'Anton', Impact, sans-serif;
-  font-size: 38px;
+  font-size: 32px;
   font-weight: 400;
   color: var(--gold-bright);
   line-height: 1;
@@ -315,9 +328,10 @@ body {
 #add-btn:disabled { opacity: 0.4; }
 
 @media (max-width: 380px) {
-  #title { font-size: 36px; }
-  #subtitle { font-size: 17px; }
-  #count-num { font-size: 32px; }
+  #logo { width: 54px; height: 54px; }
+  #title { font-size: 26px; }
+  #subtitle { font-size: 14px; }
+  #count-num { font-size: 26px; }
   #tagline { font-size: 16px; }
   .guest-name { font-size: 14px; }
 }

@@ -1,9 +1,20 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body {
+html, body {
   background: #0a0a0a;
   color: #f0f0f0;
   font-family: 'Courier New', monospace;
   min-height: 100vh;
+  min-height: 100dvh;
+  overscroll-behavior-y: contain;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  touch-action: manipulation;
+}
+body {
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 #header {
   position: sticky;
@@ -77,12 +88,16 @@ body {
 .guest-row {
   display: flex;
   align-items: center;
-  padding: 14px 16px;
+  padding: 16px;
+  min-height: 56px;
   border-bottom: 1px solid #161616;
   cursor: pointer;
   user-select: none;
+  -webkit-user-select: none;
   transition: background 0.15s;
 }
+.guest-row:active { background: #1a1a0a; }
+.guest-row.checked:active { background: #0a1500; }
 .guest-row.checked { background: #0d1a00; }
 .guest-row.walkin .guest-name::after {
   content: 'WALK-IN';
@@ -150,3 +165,9 @@ body {
 }
 #add-btn:active { background: #c9df3a; }
 #add-btn:disabled { opacity: 0.4; }
+
+@media (max-width: 380px) {
+  #title { font-size: 18px; }
+  #count-num { font-size: 24px; }
+  .guest-name { font-size: 14px; }
+}

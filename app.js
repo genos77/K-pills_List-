@@ -1,9 +1,32 @@
-const API = 'api.php';
-const SYNC_MS = 4000;
+const SEED = [
+  "Debapriya Kalpa","Asif Siraj","Tahasin Ahmed","Jay Patel","Tejas Patel",
+  "Manthan Solanki","Komal Rajput","Falguni Makwana","Makwana Nirav","Ravi Damodar",
+  "Shivani Ashokkumar","Smriti Sha","Vipul Pratapgiri","Devendrakumar Yashvant",
+  "Lalita Hankori","Jainil Kamal","Kishan Vyas","Shivani Pancholi","Jitesh Popat",
+  "Sarika Popat","Payal Jain","Shaily Desai","Sonam Singh","Ilsa Sayed","Nisha Nupur",
+  "Gulshan","Sana Shaikh","Alisher Iqbal","Usman Qamar","Hetvi Darji","Sakshi Darji",
+  "Hardik Suratia","Ayushi Soni","Opali Agarwal","Aryan Dave","Pavan Patel",
+  "Sapna Narotam","Heer Isvar","Nithu","Hetvi","Tanisha Sony Pereira","Niharika Rajesh",
+  "Vimal","Kimal","Janvi","Jigar","Hemali","Ronil","Reshma","Dikhsil","Mitesh",
+  "Cristina","Payal","Diviesh","Hritik","Parth","Aman Raheja","Saysha Shah",
+  "Shubham Gupta","Vishal Kumar","Kiranjeet Riar","Mahesh","Parvati","Swati",
+  "Vishvesh","Neel","Prachi Parihar","Oishi Datta","Meet Shah","Veeru","Parthbhai",
+  "Mihirbhai","Rahul","Rohit","Garima","Seema Shaikh","Raffin and Masood","Kiran",
+  "Bhargavi","Meet Suthar","Himani","Yakin","Pooja","Hardik","Shristi","Utsav",
+  "Nandini","Harshit","Rajvi","Abhishek","Jinal","Bhumi","Parth","Bhumi","Rajan",
+  "Bhaumik + 1","Ruchi","Antra","Smakshi","Harsh","Sakshi Gaikwad","Drashti",
+  "Prapti","Sugandha Kapoor","Zubi","Puneet","Vishal","Dhruv","Hunny","Mahnoor",
+  "Disha","Riya","Shristi Gupta","Nagina","Diyaa","Sera + 1","Dhwani","Aman Abbas",
+  "Pruthvi Nayak","Vidhi Nayak","nalz_974","Arooj Nayyar","Ghaniya Manzoor","Any",
+  "DJ Romil","Sonia Phalswal","DJ Voix","Mansi","Gracie","Arya","Pratik",
+  "Pratham Bhatt","Tamanna Bhatt","Jothy Nagalingam","Mitul Barot","Bhavin Dixit",
+  "Vanshika Patel","Ayushi Mogera","Shitansh","Shivam Kapoor","Rumi","Yamini",
+  "Krisha","Karan Ghoda","Aman Patel"
+];
 
-// state model: { guests: [{id, name, walkin, checked}], updated: <ts> }
+const KEY = 'kpills-guestlist-v1';
+
 let state = { guests: [], updated: 0 };
-let dirty = false;
 
 const listEl = document.getElementById('list');
 const searchEl = document.getElementById('search');
@@ -21,75 +44,55 @@ function newId() {
   return 'g' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
 }
 
-// merge remote into local: union of guests by id, last-write-wins on checked
-function mergeRemote(remote) {
-  if (!remote || !Array.isArray(remote.guests)) return;
-  const byId = {};
-  state.guests.forEach(g => { byId[g.id] = g; });
-  remote.guests.forEach(rg => {
-    if (!byId[rg.id]) {
-      byId[rg.id] = { ...rg };
-      state.guests.push(byId[rg.id]);
-    }
-  });
-  if ((remote.updated || 0) > (state.updated || 0)) {
-    remote.guests.forEach(rg => {
-      if (byId[rg.id]) byId[rg.id].checked = rg.checked;
-    });
-    state.updated = remote.updated;
-  }
+function seedState() {
+  return {
+    guests: SEED.map((name, i) => ({
+      id: 'seed' + i, name, walkin: false, checked: false
+    })),
+    updated: Date.now()
+  };
 }
 
-async function pull() {
-  try {
-    const r = await fetch(API, { cache: 'no-store' });
-    if (!r.ok) throw new Error('http ' + r.status);
-    const remote = await r.json();
-    mergeRemote(remote);
-    render();
-    updateCounter();
-    setSync('ok');
-  } catch(e) {
-    setSync('error');
-  }
-}
-
-async function push() {
-  if (!dirty) return;
+function save() {
   state.updated = Date.now();
-  dirty = false;
   try {
-    const r = await fetch(API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(state)
-    });
-    if (!r.ok) throw new Error('http ' + r.status);
+    localStorage.setItem(KEY, JSON.stringify(state));
     setSync('ok');
   } catch(e) {
-    dirty = true;
     setSync('error');
-    console.error('Push failed', e);
+    console.error('Save failed', e);
   }
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.guests)) {
+        state = parsed;
+        return true;
+      }
+    }
+  } catch(e) { console.error('Load failed', e); }
+  return false;
 }
 
 function setSync(s) {
   syncDot.className = '';
   if (s === 'ok') {
     syncDot.classList.add('active');
-    syncText.textContent = 'synced';
-    setTimeout(() => { if (syncDot.classList.contains('active')) syncText.textContent = 'live'; }, 1000);
+    syncText.textContent = 'saved';
   } else if (s === 'error') {
     syncDot.classList.add('error');
-    syncText.textContent = 'retrying...';
+    syncText.textContent = 'save error';
   } else {
-    syncText.textContent = 'syncing...';
+    syncText.textContent = 'ready';
   }
 }
 
 function updateCounter() {
-  const checkedCount = state.guests.filter(g => g.checked).length;
-  countNum.textContent = checkedCount;
+  countNum.textContent = state.guests.filter(g => g.checked).length;
   totalCount.textContent = state.guests.length;
 }
 
@@ -97,23 +100,19 @@ function toggle(id) {
   const g = state.guests.find(x => x.id === id);
   if (!g) return;
   g.checked = !g.checked;
-  dirty = true;
-  state.updated = Date.now();
   render();
   updateCounter();
-  push();
+  save();
 }
 
 function addGuest(name) {
   name = name.trim();
   if (!name) return;
   state.guests.push({ id: newId(), name, walkin: true, checked: true });
-  dirty = true;
-  state.updated = Date.now();
-  searchEl.value = '';
+  addInput.value = '';
   render();
   updateCounter();
-  push();
+  save();
 }
 
 function render() {
@@ -147,27 +146,14 @@ function render() {
 
 searchEl.addEventListener('input', render);
 clearBtn.addEventListener('click', () => { searchEl.value = ''; render(); searchEl.focus(); });
-
 addBtn.addEventListener('click', () => addGuest(addInput.value));
-addInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter') { addGuest(addInput.value); addInput.value = ''; }
-});
+addInput.addEventListener('keydown', e => { if (e.key === 'Enter') addGuest(addInput.value); });
 
-async function init() {
-  setSync('syncing');
-  try {
-    const r = await fetch(API, { cache: 'no-store' });
-    if (r.ok) {
-      state = await r.json();
-    }
-  } catch(e) { setSync('error'); }
-  render();
-  updateCounter();
-  setSync('ok');
-  setInterval(async () => {
-    await push();
-    await pull();
-  }, SYNC_MS);
+// init
+if (!load()) {
+  state = seedState();
+  save();
 }
-
-init();
+render();
+updateCounter();
+setSync('ok');

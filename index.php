@@ -1,0 +1,45 @@
+<?php
+// index.php — K-Pill's House Guest List
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>K-Pill's House — Guest List</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="header">
+  <div id="top-row">
+    <div>
+      <div id="label">K-Pill's House</div>
+      <div id="title">Guest List</div>
+    </div>
+    <div id="counter">
+      <div id="count-num">0</div>
+      <div id="count-label">/ <span id="total-count">0</span> IN</div>
+    </div>
+  </div>
+  <div id="search-wrap">
+    <input id="search" type="text" placeholder="Search name..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <button id="clear-btn">×</button>
+  </div>
+  <div id="status-row">
+    <div id="sync-status"><span id="sync-dot"></span><span id="sync-text">connecting...</span></div>
+    <div id="result-count"></div>
+  </div>
+</div>
+
+<div id="list"></div>
+<div id="empty">NOT ON THE LIST</div>
+
+<div id="add-bar">
+  <input id="add-input" type="text" placeholder="Add walk-in name..." autocomplete="off" autocapitalize="words" spellcheck="false">
+  <button id="add-btn">ADD</button>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

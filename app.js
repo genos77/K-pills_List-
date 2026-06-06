@@ -2,11 +2,11 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { SUPABASE_URL, SUPABASE_ANON } from './config.js';
 
 const SEED = [
-  "Debapriya Kalpa","Asif Siraj","Tahasin Ahmed","Jay Patel","Tejas Patel",
-  "Manthan Solanki","Komal Rajput","Falguni Makwana","Makwana Nirav","Ravi Damodar",
-  "Shivani Ashokkumar","Smriti Sha","Vipul Pratapgiri","Devendrakumar Yashvant",
-  "Lalita Hankori","Jainil Kamal","Kishan Vyas","Shivani Pancholi","Jitesh Popat",
-  "Sarika Popat","Payal Jain","Shaily Desai","Sonam Singh","Ilsa Sayed","Nisha Nupur",
+  "Debapriya kalpa","Asif siraj","Tahasin Ahmed","Jay patel","Tejas patel",
+  "Manthan solanki","Komal Rajput","Falguni Makwana","Makwana Nirav","Ravi damodar",
+  "Shivani Ashokkumar","Smriti sha","Vipul pratapgiri","Devendrakumar yashvant",
+  "Lalita hankori","Jainil kamal","Kishan Vyas","Shivani Pancholi","Jitesh popat",
+  "Sarika popat","Payal Jain","Shaily desai","Sonam singh","Ilsa sayed","Nisha nupur",
   "Gulshan","Sana Shaikh","Alisher Iqbal","Usman Qamar","Hetvi Darji","Sakshi Darji",
   "Hardik Suratia","Ayushi Soni","Opali Agarwal","Aryan Dave","Pavan Patel",
   "Sapna Narotam","Heer Isvar","Nithu","Hetvi","Tanisha Sony Pereira","Niharika Rajesh",
@@ -22,9 +22,16 @@ const SEED = [
   "Disha","Riya","Shristi Gupta","Nagina","Diyaa","Sera + 1","Dhwani","Aman Abbas",
   "Pruthvi Nayak","Vidhi Nayak","nalz_974","Arooj Nayyar","Ghaniya Manzoor","Any",
   "DJ Romil","Sonia Phalswal","DJ Voix","Mansi","Gracie","Arya","Pratik",
-  "Pratham Bhatt","Tamanna Bhatt","Jothy Nagalingam","Mitul Barot","Bhavin Dixit",
-  "Vanshika Patel","Ayushi Mogera","Shitansh","Shivam Kapoor","Rumi","Yamini",
-  "Krisha","Karan Ghoda","Aman Patel"
+  "Pratham bhatt","Tamanna bhatt","Jothy Nagalingam","Mitul Barot","Bhavin Dixit",
+  "Vanshika Patel","Ayushi Mogera","Shitansh","Shivam kapoor","Rumi","Yamini",
+  "Krisha","Karan Ghoda","Aman Patel","Amrita","Zeel bhavsar","raj bhavsar",
+  "dhrutii sharma","reetal patel","harry patel","parth rana","rajvi rana",
+  "shivani vyas","dhrumil vora","Smita Parmar","Parshwa Bhatt","Laksh Sharma",
+  "Taran Boodhoo","Shereen maan","Jasleen maan","Dhruv saroha","Iffat Ahmed",
+  "Nafisa Tanjeem","Masum Ahmed","Nahid hk","Arif Hasan","DJ Keval",
+  "Krishnika Kapoor","Pratap","DJ Ronak","Mohit chandila","Dev rana","Sarthak",
+  "Vedika","GL","Anshu","Keval Bhutiya","Shivani Kambariya","Prarthit kumar",
+  "Harsh jiyani","Yuvraj Gaur","Chandan Nayak","Riyaa bodiwala + 1","Naaju shah"
 ];
 
 let guests = [];

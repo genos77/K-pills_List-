@@ -1,3 +1,6 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { SUPABASE_URL, SUPABASE_ANON } from './config.js';
+
 const SEED = [
   "Debapriya Kalpa","Asif Siraj","Tahasin Ahmed","Jay Patel","Tejas Patel",
   "Manthan Solanki","Komal Rajput","Falguni Makwana","Makwana Nirav","Ravi Damodar",
@@ -24,10 +27,8 @@ const SEED = [
   "Krisha","Karan Ghoda","Aman Patel"
 ];
 
-const KEY = 'kpills-guestlist-v1';
-
-let state = { guests: [], updated: 0 };
-let filter = 'all'; // 'all' | 'in' | 'out'
+let guests = [];
+let filter = 'all';
 
 const listEl = document.getElementById('list');
 const searchEl = document.getElementById('search');
@@ -45,84 +46,22 @@ function newId() {
   return 'g' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
 }
 
-function seedState() {
-  return {
-    guests: SEED.map((name, i) => ({
-      id: 'seed' + i, name, walkin: false, checked: false
-    })),
-    updated: Date.now()
-  };
-}
-
-function save() {
-  state.updated = Date.now();
-  try {
-    localStorage.setItem(KEY, JSON.stringify(state));
-    setSync('ok');
-  } catch(e) {
-    setSync('error');
-    console.error('Save failed', e);
-  }
-}
-
-function load() {
-  try {
-    const raw = localStorage.getItem(KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (parsed && Array.isArray(parsed.guests)) {
-        state = parsed;
-        return true;
-      }
-    }
-  } catch(e) { console.error('Load failed', e); }
-  return false;
-}
-
 function setSync(s) {
   syncDot.className = '';
-  if (s === 'ok') {
-    syncDot.classList.add('active');
-    syncText.textContent = 'saved';
-  } else if (s === 'error') {
-    syncDot.classList.add('error');
-    syncText.textContent = 'save error';
-  } else {
-    syncText.textContent = 'ready';
-  }
+  if (s === 'ok')      { syncDot.classList.add('active'); syncText.textContent = 'live'; }
+  else if (s === 'error') { syncDot.classList.add('error');  syncText.textContent = 'offline'; }
+  else                  { syncText.textContent = 'syncing...'; }
 }
 
 function updateCounter() {
-  countNum.textContent = state.guests.filter(g => g.checked).length;
-  totalCount.textContent = state.guests.length;
-}
-
-function toggle(id) {
-  const g = state.guests.find(x => x.id === id);
-  if (!g) return;
-  g.checked = !g.checked;
-  render();
-  updateCounter();
-  save();
-}
-
-function addGuest(input) {
-  if (!input) return;
-  const names = input.split(',').map(n => n.trim()).filter(Boolean);
-  if (names.length === 0) return;
-  names.forEach(name => {
-    state.guests.push({ id: newId(), name, walkin: true, checked: true });
-  });
-  addInput.value = '';
-  render();
-  updateCounter();
-  save();
+  countNum.textContent = guests.filter(g => g.checked).length;
+  totalCount.textContent = guests.length;
 }
 
 function render() {
   const q = searchEl.value.trim().toLowerCase();
   listEl.innerHTML = '';
-  const filtered = state.guests.filter(g => {
+  const filtered = guests.filter(g => {
     if (filter === 'in' && !g.checked) return false;
     if (filter === 'out' && g.checked) return false;
     if (q && !g.name.toLowerCase().includes(q)) return false;
@@ -153,9 +92,79 @@ function render() {
   listEl.appendChild(frag);
 }
 
+// ------- Supabase wiring -------
+let sb = null;
+
+async function toggle(id) {
+  const g = guests.find(x => x.id === id);
+  if (!g) return;
+  const next = !g.checked;
+  g.checked = next;          // optimistic
+  render(); updateCounter();
+  const { error } = await sb.from('guests').update({ checked: next }).eq('id', id);
+  if (error) {
+    g.checked = !next; render(); updateCounter(); setSync('error');
+    console.error('toggle failed', error);
+  }
+}
+
+async function addGuest(input) {
+  if (!input) return;
+  const names = input.split(',').map(n => n.trim()).filter(Boolean);
+  if (names.length === 0) return;
+  addInput.value = '';
+  const rows = names.map(name => ({
+    id: newId(), name, walkin: true, checked: true
+  }));
+  rows.forEach(r => { if (!guests.find(g => g.id === r.id)) guests.push(r); });
+  render(); updateCounter();
+  const { error } = await sb.from('guests').insert(rows);
+  if (error) {
+    rows.forEach(r => { guests = guests.filter(g => g.id !== r.id); });
+    render(); updateCounter(); setSync('error');
+    console.error('add failed', error);
+  }
+}
+
+async function loadAll() {
+  const { data, error } = await sb.from('guests').select('*').order('created_at', { ascending: true });
+  if (error) { setSync('error'); console.error('load failed', error); return; }
+
+  if (data.length === 0) {
+    const rows = SEED.map((name, i) => ({
+      id: 'seed' + i, name, walkin: false, checked: false
+    }));
+    const { error: e2 } = await sb.from('guests').insert(rows);
+    if (e2) { setSync('error'); console.error('seed failed', e2); return; }
+    guests = rows;
+  } else {
+    guests = data;
+  }
+  render(); updateCounter(); setSync('ok');
+}
+
+function subscribe() {
+  sb.channel('guests-live')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'guests' }, payload => {
+      const { eventType, new: row, old } = payload;
+      if (eventType === 'INSERT') {
+        if (!guests.find(g => g.id === row.id)) guests.push(row);
+      } else if (eventType === 'UPDATE') {
+        const g = guests.find(x => x.id === row.id);
+        if (g) Object.assign(g, row);
+      } else if (eventType === 'DELETE') {
+        guests = guests.filter(g => g.id !== old.id);
+      }
+      render(); updateCounter();
+    })
+    .subscribe(status => { if (status === 'SUBSCRIBED') setSync('ok'); });
+}
+
+// ------- listeners -------
 searchEl.addEventListener('input', render);
 clearBtn.addEventListener('click', () => { searchEl.value = ''; render(); searchEl.focus(); });
-
+addBtn.addEventListener('click', () => addGuest(addInput.value));
+addInput.addEventListener('keydown', e => { if (e.key === 'Enter') addGuest(addInput.value); });
 document.querySelectorAll('.tab').forEach(btn => {
   btn.addEventListener('click', () => {
     filter = btn.dataset.filter;
@@ -163,14 +172,15 @@ document.querySelectorAll('.tab').forEach(btn => {
     render();
   });
 });
-addBtn.addEventListener('click', () => addGuest(addInput.value));
-addInput.addEventListener('keydown', e => { if (e.key === 'Enter') addGuest(addInput.value); });
 
-// init
-if (!load()) {
-  state = seedState();
-  save();
+// ------- init -------
+if (SUPABASE_URL.includes('YOUR-PROJECT') || SUPABASE_ANON.includes('YOUR-')) {
+  syncDot.className = 'error';
+  syncText.textContent = 'config.js missing keys';
+  countNum.textContent = '!';
+} else {
+  setSync('syncing');
+  sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+  await loadAll();
+  subscribe();
 }
-render();
-updateCounter();
-setSync('ok');

@@ -200,6 +200,17 @@ body {
 #sync-dot.active { background: var(--gold); }
 #sync-dot.error { background: var(--error); }
 
+#error-banner {
+  background: #3a0808;
+  color: #ff9090;
+  padding: 12px 16px;
+  font-size: 13px;
+  border-bottom: 1px solid #5a1010;
+  display: none;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+#error-banner.show { display: block; }
 #list { padding-bottom: 90px; }
 
 .guest-row {

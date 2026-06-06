@@ -48,6 +48,13 @@ const addInput = document.getElementById('add-input');
 const addBtn = document.getElementById('add-btn');
 const syncDot = document.getElementById('sync-dot');
 const syncText = document.getElementById('sync-text');
+const errorBanner = document.getElementById('error-banner');
+
+function showError(msg) {
+  errorBanner.textContent = 'ERROR: ' + msg;
+  errorBanner.classList.add('show');
+  console.error(msg);
+}
 
 function newId() {
   return 'g' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
@@ -135,14 +142,22 @@ async function addGuest(input) {
 
 async function loadAll() {
   const { data, error } = await sb.from('guests').select('*').order('created_at', { ascending: true });
-  if (error) { setSync('error'); console.error('load failed', error); return; }
+  if (error) {
+    setSync('error');
+    showError('Load failed: ' + error.message + ' (code: ' + (error.code || 'none') + ')');
+    return;
+  }
 
   if (data.length === 0) {
     const rows = SEED.map((name, i) => ({
       id: 'seed' + i, name, walkin: false, checked: false
     }));
     const { error: e2 } = await sb.from('guests').insert(rows);
-    if (e2) { setSync('error'); console.error('seed failed', e2); return; }
+    if (e2) {
+      setSync('error');
+      showError('Seed insert failed: ' + e2.message + ' (code: ' + (e2.code || 'none') + ')');
+      return;
+    }
     guests = rows;
   } else {
     guests = data;
@@ -185,9 +200,15 @@ if (SUPABASE_URL.includes('YOUR-PROJECT') || SUPABASE_ANON.includes('YOUR-')) {
   syncDot.className = 'error';
   syncText.textContent = 'config.js missing keys';
   countNum.textContent = '!';
+  showError('config.js still has placeholder values. Update SUPABASE_URL and SUPABASE_ANON.');
 } else {
   setSync('syncing');
-  sb = createClient(SUPABASE_URL, SUPABASE_ANON);
-  await loadAll();
-  subscribe();
+  try {
+    sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+    await loadAll();
+    subscribe();
+  } catch (e) {
+    setSync('error');
+    showError('Init crashed: ' + (e && e.message ? e.message : String(e)));
+  }
 }

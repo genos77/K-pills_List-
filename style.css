@@ -52,24 +52,25 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 5px;
   flex-shrink: 0;
 }
 #arcnux-logo {
-  width: 44px;
-  height: 44px;
+  width: 64px;
+  height: 64px;
   display: block;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #fff;
-  padding: 3px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  padding: 5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.6);
 }
 #powered-by-text {
-  font-size: 8px;
-  letter-spacing: 1.5px;
-  color: var(--muted);
-  text-transform: lowercase;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--cream);
+  text-transform: uppercase;
   white-space: nowrap;
+  font-weight: 700;
 }
 
 #top-row {
@@ -356,8 +357,8 @@ body {
   #title { font-size: 24px; }
   #subtitle { font-size: 13px; }
   #count-num { font-size: 24px; }
-  #arcnux-logo { width: 36px; height: 36px; }
-  #powered-by-text { font-size: 7px; }
+  #arcnux-logo { width: 52px; height: 52px; }
+  #powered-by-text { font-size: 9px; letter-spacing: 1.5px; }
   #tagline { font-size: 16px; }
   .guest-name { font-size: 14px; }
   #top-row { gap: 8px; }

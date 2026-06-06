@@ -1,5 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="#0a0a0a"/>
-  <circle cx="256" cy="256" r="160" fill="#e8ff57"/>
-  <text x="256" y="310" font-family="Courier New, monospace" font-weight="700" font-size="180" text-anchor="middle" fill="#0a0a0a">K</text>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#5a1810"/>
+      <stop offset="100%" stop-color="#1f0604"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <text x="256" y="320" font-family="Impact, Anton, sans-serif" font-weight="900" font-size="320" text-anchor="middle" fill="#e8b83a" stroke="#6a3010" stroke-width="6">K</text>
 </svg>

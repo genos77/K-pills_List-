@@ -1,12 +1,12 @@
 {
-  "name": "K-Pill's House — Guest List",
+  "name": "K-Pill's 2016 Again — Guest List",
   "short_name": "K-Pill's",
-  "description": "Door check-in for K-Pill's House",
+  "description": "Door check-in for K-Pill's 2016 Again",
   "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0a0a0a",
-  "theme_color": "#0a0a0a",
+  "background_color": "#1f0604",
+  "theme_color": "#2a0805",
   "icons": [
     { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]

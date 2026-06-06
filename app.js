@@ -106,10 +106,13 @@ function toggle(id) {
   save();
 }
 
-function addGuest(name) {
-  name = name.trim();
-  if (!name) return;
-  state.guests.push({ id: newId(), name, walkin: true, checked: true });
+function addGuest(input) {
+  if (!input) return;
+  const names = input.split(',').map(n => n.trim()).filter(Boolean);
+  if (names.length === 0) return;
+  names.forEach(name => {
+    state.guests.push({ id: newId(), name, walkin: true, checked: true });
+  });
   addInput.value = '';
   render();
   updateCounter();

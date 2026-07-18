@@ -80,49 +80,6 @@ body {
   margin-bottom: 8px;
 }
 
-#logo {
-  width: 64px;
-  height: 64px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 2px solid var(--gold-dim);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-  flex-shrink: 0;
-}
-
-#title-block { flex: 1; min-width: 0; }
-
-#label {
-  font-family: 'Bebas Neue', 'Courier New', monospace;
-  font-size: 13px;
-  letter-spacing: 4px;
-  color: var(--tan);
-  text-transform: uppercase;
-  margin-bottom: 2px;
-}
-
-#title {
-  font-family: 'Anton', Impact, sans-serif;
-  font-size: 32px;
-  font-weight: 400;
-  letter-spacing: 1px;
-  line-height: 0.95;
-  color: var(--gold);
-  text-shadow:
-    2px 2px 0 #6a3010,
-    3px 3px 0 rgba(0,0,0,0.5);
-  text-transform: uppercase;
-}
-
-#subtitle {
-  font-family: 'Anton', Impact, sans-serif;
-  font-size: 16px;
-  letter-spacing: 3px;
-  color: var(--gold-dim);
-  margin-top: 2px;
-  text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
-}
-
 #counter { text-align: right; flex-shrink: 0; }
 #count-num {
   font-family: 'Anton', Impact, sans-serif;
@@ -352,9 +309,6 @@ body {
 #add-btn:disabled { opacity: 0.4; }
 
 @media (max-width: 380px) {
-  #logo { width: 54px; height: 54px; }
-  #title { font-size: 24px; }
-  #subtitle { font-size: 13px; }
   #count-num { font-size: 24px; }
   #arcnux-logo { width: 52px; height: 52px; }
   #powered-by-text { font-size: 9px; letter-spacing: 1.5px; }

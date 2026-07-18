@@ -72,15 +72,40 @@ function updateCounter() {
   totalCount.textContent = guests.length;
 }
 
+// Rank a name against the query: 0 = full name starts with it,
+// 1 = any word in the name starts with it, 2 = it appears elsewhere.
+function matchRank(name, q) {
+  const n = name.toLowerCase();
+  if (n.startsWith(q)) return 0;
+  if (n.split(/\s+/).some(w => w.startsWith(q))) return 1;
+  if (n.includes(q)) return 2;
+  return 3;
+}
+
+function nameMatches(name, q) {
+  const rank = matchRank(name, q);
+  // Short queries (e.g. "D") only match name/word prefixes so
+  // "Dhruv Patel" rises to the top and "Hardik"/"Aditi" stay out.
+  if (q.length <= 2) return rank <= 1;
+  return rank <= 2;
+}
+
 function render() {
   const q = searchEl.value.trim().toLowerCase();
   listEl.innerHTML = '';
   const filtered = guests.filter(g => {
     if (filter === 'in' && !g.checked) return false;
     if (filter === 'out' && g.checked) return false;
-    if (q && !g.name.toLowerCase().includes(q)) return false;
+    if (q && !nameMatches(g.name, q)) return false;
     return true;
   });
+
+  if (q) {
+    filtered.sort((a, b) => {
+      const r = matchRank(a.name, q) - matchRank(b.name, q);
+      return r !== 0 ? r : a.name.localeCompare(b.name);
+    });
+  }
 
   clearBtn.style.display = q ? 'block' : 'none';
   resultCount.textContent = q ? `${filtered.length} result${filtered.length !== 1 ? 's' : ''}` : '';

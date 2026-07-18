@@ -168,9 +168,9 @@ body {
 }
 .tab:active { background: var(--surface-2); }
 .tab.active {
-  background: var(--gold);
+  background: var(--surface-2);
   border-color: var(--gold);
-  color: #000;
+  color: var(--gold);
 }
 
 #status-row {
@@ -307,8 +307,8 @@ body {
 #add-input::placeholder { color: var(--muted); }
 
 #add-btn {
-  background: var(--gold);
-  color: #000;
+  background: var(--surface);
+  color: var(--ink);
   border: 1px solid var(--gold);
   border-radius: 10px;
   font-family: inherit;

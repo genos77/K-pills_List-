@@ -93,7 +93,7 @@ function render() {
     row.innerHTML = `
       <div class="dot">
         <svg class="checkmark" width="12" height="9" viewBox="0 0 12 9" fill="none">
-          <path d="M1 4L4.5 7.5L11 1" stroke="#0a0a0a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M1 4L4.5 7.5L11 1" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
       <span class="guest-name"></span>
